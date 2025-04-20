@@ -1,0 +1,556 @@
+{
+  "students": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH101",
+          "assignments": 90,
+          "quizzes": 80,
+          "projects": 85,
+          "exams": 88,
+          "feedback": "Good performance"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI101",
+          "assignments": 75,
+          "quizzes": 70,
+          "projects": 80,
+          "exams": 78,
+          "feedback": "Needs improvement"
+        },
+        {
+          "subject": "History",
+          "code": "HIST101",
+          "assignments": 82,
+          "quizzes": 88,
+          "projects": 80,
+          "exams": 92,
+          "feedback": "Excellent work"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT101",
+          "assignments": 78,
+          "quizzes": 82,
+          "projects": 80,
+          "exams": 84,
+          "feedback": "Good effort"
+        },
+        {
+          "subject": "Art",
+          "code": "ART101",
+          "assignments": 90,
+          "quizzes": 85,
+          "projects": 92,
+          "exams": 95,
+          "feedback": "Creative work"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS101",
+          "assignments": 76,
+          "quizzes": 80,
+          "projects": 70,
+          "exams": 82,
+          "feedback": "Can do better"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM101",
+          "assignments": 88,
+          "quizzes": 80,
+          "projects": 90,
+          "exams": 85,
+          "feedback": "Strong understanding"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH102",
+          "assignments": 88,
+          "quizzes": 76,
+          "projects": 84,
+          "exams": 91,
+          "feedback": "Good effort"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI102",
+          "assignments": 80,
+          "quizzes": 72,
+          "projects": 75,
+          "exams": 83,
+          "feedback": "Needs some improvement"
+        },
+        {
+          "subject": "History",
+          "code": "HIST102",
+          "assignments": 85,
+          "quizzes": 82,
+          "projects": 90,
+          "exams": 89,
+          "feedback": "Excellent performance"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT102",
+          "assignments": 78,
+          "quizzes": 70,
+          "projects": 85,
+          "exams": 75,
+          "feedback": "Room for improvement"
+        },
+        {
+          "subject": "Art",
+          "code": "ART102",
+          "assignments": 85,
+          "quizzes": 88,
+          "projects": 90,
+          "exams": 87,
+          "feedback": "Creative but needs focus"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS102",
+          "assignments": 79,
+          "quizzes": 70,
+          "projects": 75,
+          "exams": 80,
+          "feedback": "Needs work"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM102",
+          "assignments": 90,
+          "quizzes": 85,
+          "projects": 88,
+          "exams": 92,
+          "feedback": "Very strong performance"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Mark Lee",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH103",
+          "assignments": 78,
+          "quizzes": 85,
+          "projects": 88,
+          "exams": 80,
+          "feedback": "Decent performance"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI103",
+          "assignments": 90,
+          "quizzes": 88,
+          "projects": 92,
+          "exams": 95,
+          "feedback": "Excellent"
+        },
+        {
+          "subject": "History",
+          "code": "HIST103",
+          "assignments": 72,
+          "quizzes": 77,
+          "projects": 80,
+          "exams": 70,
+          "feedback": "Needs significant improvement"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT103",
+          "assignments": 75,
+          "quizzes": 80,
+          "projects": 78,
+          "exams": 82,
+          "feedback": "Good progress"
+        },
+        {
+          "subject": "Art",
+          "code": "ART103",
+          "assignments": 88,
+          "quizzes": 85,
+          "projects": 92,
+          "exams": 90,
+          "feedback": "Fantastic creativity"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS103",
+          "assignments": 80,
+          "quizzes": 85,
+          "projects": 75,
+          "exams": 80,
+          "feedback": "Solid effort"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM103",
+          "assignments": 85,
+          "quizzes": 90,
+          "projects": 92,
+          "exams": 94,
+          "feedback": "Strong understanding"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Emma Wilson",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH104",
+          "assignments": 92,
+          "quizzes": 90,
+          "projects": 95,
+          "exams": 96,
+          "feedback": "Exceptional"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI104",
+          "assignments": 85,
+          "quizzes": 82,
+          "projects": 80,
+          "exams": 88,
+          "feedback": "Good but needs focus"
+        },
+        {
+          "subject": "History",
+          "code": "HIST104",
+          "assignments": 80,
+          "quizzes": 78,
+          "projects": 88,
+          "exams": 85,
+          "feedback": "Solid work"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT104",
+          "assignments": 90,
+          "quizzes": 92,
+          "projects": 85,
+          "exams": 80,
+          "feedback": "Great effort"
+        },
+        {
+          "subject": "Art",
+          "code": "ART104",
+          "assignments": 85,
+          "quizzes": 80,
+          "projects": 88,
+          "exams": 90,
+          "feedback": "Creative but inconsistent"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS104",
+          "assignments": 80,
+          "quizzes": 75,
+          "projects": 78,
+          "exams": 85,
+          "feedback": "Needs more practice"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM104",
+          "assignments": 90,
+          "quizzes": 85,
+          "projects": 80,
+          "exams": 88,
+          "feedback": "Good work"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Sophia Brown",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH105",
+          "assignments": 85,
+          "quizzes": 80,
+          "projects": 88,
+          "exams": 87,
+          "feedback": "Good understanding"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI105",
+          "assignments": 88,
+          "quizzes": 82,
+          "projects": 80,
+          "exams": 85,
+          "feedback": "Consistent"
+        },
+        {
+          "subject": "History",
+          "code": "HIST105",
+          "assignments": 90,
+          "quizzes": 85,
+          "projects": 95,
+          "exams": 92,
+          "feedback": "Excellent"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT105",
+          "assignments": 85,
+          "quizzes": 75,
+          "projects": 80,
+          "exams": 78,
+          "feedback": "Room for improvement"
+        },
+        {
+          "subject": "Art",
+          "code": "ART105",
+          "assignments": 92,
+          "quizzes": 90,
+          "projects": 95,
+          "exams": 96,
+          "feedback": "Creative genius"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS105",
+          "assignments": 78,
+          "quizzes": 80,
+          "projects": 70,
+          "exams": 85,
+          "feedback": "Good effort"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM105",
+          "assignments": 95,
+          "quizzes": 88,
+          "projects": 90,
+          "exams": 91,
+          "feedback": "Strong performer"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Lucas Davis",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH106",
+          "assignments": 80,
+          "quizzes": 75,
+          "projects": 78,
+          "exams": 82,
+          "feedback": "Needs improvement"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI106",
+          "assignments": 85,
+          "quizzes": 80,
+          "projects": 82,
+          "exams": 80,
+          "feedback": "Room for improvement"
+        },
+        {
+          "subject": "History",
+          "code": "HIST106",
+          "assignments": 78,
+          "quizzes": 70,
+          "projects": 75,
+          "exams": 80,
+          "feedback": "Decent"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT106",
+          "assignments": 88,
+          "quizzes": 85,
+          "projects": 92,
+          "exams": 95,
+          "feedback": "Excellent effort"
+        },
+        {
+          "subject": "Art",
+          "code": "ART106",
+          "assignments": 78,
+          "quizzes": 80,
+          "projects": 75,
+          "exams": 85,
+          "feedback": "Needs improvement"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS106",
+          "assignments": 90,
+          "quizzes": 85,
+          "projects": 88,
+          "exams": 92,
+          "feedback": "Strong work"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM106",
+          "assignments": 82,
+          "quizzes": 75,
+          "projects": 80,
+          "exams": 85,
+          "feedback": "Good progress"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Isabella Moore",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH107",
+          "assignments": 70,
+          "quizzes": 75,
+          "projects": 80,
+          "exams": 75,
+          "feedback": "Needs improvement"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI107",
+          "assignments": 88,
+          "quizzes": 85,
+          "projects": 80,
+          "exams": 80,
+          "feedback": "Good understanding"
+        },
+        {
+          "subject": "History",
+          "code": "HIST107",
+          "assignments": 75,
+          "quizzes": 70,
+          "projects": 78,
+          "exams": 80,
+          "feedback": "Room for improvement"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT107",
+          "assignments": 85,
+          "quizzes": 88,
+          "projects": 92,
+          "exams": 90,
+          "feedback": "Strong work"
+        },
+        {
+          "subject": "Art",
+          "code": "ART107",
+          "assignments": 92,
+          "quizzes": 90,
+          "projects": 85,
+          "exams": 85,
+          "feedback": "Creative but inconsistent"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS107",
+          "assignments": 85,
+          "quizzes": 80,
+          "projects": 75,
+          "exams": 88,
+          "feedback": "Good understanding"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM107",
+          "assignments": 90,
+          "quizzes": 92,
+          "projects": 88,
+          "exams": 91,
+          "feedback": "Great performance"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Oliver Harris",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH108",
+          "assignments": 92,
+          "quizzes": 88,
+          "projects": 95,
+          "exams": 92,
+          "feedback": "Excellent performance"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI108",
+          "assignments": 90,
+          "quizzes": 92,
+          "projects": 85,
+          "exams": 90,
+          "feedback": "Strong understanding"
+        },
+        {
+          "subject": "History",
+          "code": "HIST108",
+          "assignments": 85,
+          "quizzes": 80,
+          "projects": 75,
+          "exams": 78,
+          "feedback": "Needs improvement"
+        },
+        {
+          "subject": "Literature",
+          "code": "LIT108",
+          "assignments": 92,
+          "quizzes": 85,
+          "projects": 90,
+          "exams": 88,
+          "feedback": "Good understanding"
+        },
+        {
+          "subject": "Art",
+          "code": "ART108",
+          "assignments": 90,
+          "quizzes": 85,
+          "projects": 92,
+          "exams": 88,
+          "feedback": "Creative but inconsistent"
+        },
+        {
+          "subject": "Physics",
+          "code": "PHYS108",
+          "assignments": 80,
+          "quizzes": 88,
+          "projects": 85,
+          "exams": 90,
+          "feedback": "Strong performance"
+        },
+        {
+          "subject": "Chemistry",
+          "code": "CHEM108",
+          "assignments": 85,
+          "quizzes": 82,
+          "projects": 75,
+          "exams": 80,
+          "feedback": "Needs work"
+        }
+      ]
+    }
+  ]
+}

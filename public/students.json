@@ -1,0 +1,73 @@
+{
+  "students": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "subjects": [
+        {
+          "subject": "Mathematics",
+          "code": "MATH101",
+          "prelim": 75,
+          "midterm": 80,
+          "preFinal": 85,
+          "final": 90,
+          "feedback": "Steady improvement"
+        },
+        {
+          "subject": "Science",
+          "code": "SCI101",
+          "prelim": 85,
+          "midterm": 83,
+          "preFinal": 80,
+          "final": 78,
+          "feedback": "Slight decline, needs attention"
+        },
+        {
+          "subject": "English",
+          "code": "ENG101",
+          "prelim": 88,
+          "midterm": 90,
+          "preFinal": 92,
+          "final": 91,
+          "feedback": "Excellent performance"
+        },
+        {
+          "subject": "Filipino",
+          "code": "FIL101",
+          "prelim": 80,
+          "midterm": 82,
+          "preFinal": 84,
+          "final": 83,
+          "feedback": "Consistent effort"
+        },
+        {
+          "subject": "History",
+          "code": "HIST101",
+          "prelim": 78,
+          "midterm": 79,
+          "preFinal": 77,
+          "final": 76,
+          "feedback": "Needs more participation"
+        },
+        {
+          "subject": "Computer Science",
+          "code": "CS101",
+          "prelim": 90,
+          "midterm": 88,
+          "preFinal": 91,
+          "final": 93,
+          "feedback": "Strong technical skills"
+        },
+        {
+          "subject": "Physical Education",
+          "code": "PE101",
+          "prelim": 95,
+          "midterm": 94,
+          "preFinal": 96,
+          "final": 97,
+          "feedback": "Outstanding physical performance"
+        }
+      ]
+    }
+  ]
+}
