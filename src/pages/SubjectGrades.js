@@ -5,12 +5,9 @@ import {
   Typography,
   Grid,
   CircularProgress,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   IconButton,
   Box,
+  useTheme,
 } from "@mui/material";
 import {
   Chart as ChartJS,
@@ -43,6 +40,8 @@ ChartJS.register(
 function SubjectGrades() {
   const [studentData, setStudentData] = useState(null);
   const [chartType, setChartType] = useState("doughnut");
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   useEffect(() => {
     fetch("/student.json")
@@ -53,25 +52,54 @@ function SubjectGrades() {
   }, []);
 
   if (!studentData) {
-    return <CircularProgress />;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   const renderChart = (data) => {
+    const commonOptions = {
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: isDark ? "#fff" : "#000",
+          },
+        },
+      },
+      scales: chartType !== "doughnut" && {
+        x: {
+          ticks: {
+            color: isDark ? "#fff" : "#000",
+          },
+        },
+        y: {
+          ticks: {
+            color: isDark ? "#fff" : "#000",
+          },
+        },
+      },
+    };
+
     switch (chartType) {
       case "bar":
-        return <Bar data={data} options={{ maintainAspectRatio: false }} />;
+        return <Bar data={data} options={commonOptions} />;
       case "line":
-        return <Line data={data} options={{ maintainAspectRatio: false }} />;
+        return <Line data={data} options={commonOptions} />;
       default:
-        return (
-          <Doughnut data={data} options={{ maintainAspectRatio: false }} />
-        );
+        return <Doughnut data={data} options={commonOptions} />;
     }
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ padding: "2rem" }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ color: isDark ? "white" : "black" }}
+      >
         {studentData.name}'s Grades Overview
       </Typography>
 
@@ -113,7 +141,7 @@ function SubjectGrades() {
                   subj.exams,
                 ],
                 backgroundColor: ["#42a5f5", "#66bb6a", "#ffa726", "#ef5350"],
-                borderColor: "#333",
+                borderColor: isDark ? "#ddd" : "#333",
                 borderWidth: 1,
                 tension: 0.4,
               },
@@ -122,12 +150,18 @@ function SubjectGrades() {
 
           return (
             <Grid item xs={12} md={6} lg={4} key={subj.code}>
-              <Card elevation={3}>
+              <Card
+                elevation={3}
+                sx={{
+                  backgroundColor: isDark ? "#1e1e1e" : "#fff",
+                  color: isDark ? "#fff" : "#000",
+                }}
+              >
                 <CardContent>
                   <Typography variant="h6">{subj.subject}</Typography>
-                  <div style={{ width: "100%", height: 250 }}>
+                  <Box sx={{ width: "100%", height: 250 }}>
                     {renderChart(data)}
-                  </div>
+                  </Box>
                   <Typography variant="body2" sx={{ mt: 2 }}>
                     <strong>Total:</strong> {total} / 100
                   </Typography>
@@ -140,7 +174,7 @@ function SubjectGrades() {
           );
         })}
       </Grid>
-    </div>
+    </Box>
   );
 }
 

@@ -2,11 +2,11 @@
   "students": [
     {
       "id": 1,
-      "name": "John Doe",
+      "name": "Selwyn Paul Taloza Smith",
       "subjects": [
         {
-          "subject": "Mathematics",
-          "code": "MATH101",
+          "subject": "Introduction to Programming",
+          "code": "CS101",
           "prelim": 75,
           "midterm": 80,
           "preFinal": 85,
@@ -14,8 +14,8 @@
           "feedback": "Steady improvement"
         },
         {
-          "subject": "Science",
-          "code": "SCI101",
+          "subject": "Data Structures",
+          "code": "CS102",
           "prelim": 85,
           "midterm": 83,
           "preFinal": 80,
@@ -23,8 +23,8 @@
           "feedback": "Slight decline, needs attention"
         },
         {
-          "subject": "English",
-          "code": "ENG101",
+          "subject": "Computer Architecture",
+          "code": "CS103",
           "prelim": 88,
           "midterm": 90,
           "preFinal": 92,
@@ -32,8 +32,8 @@
           "feedback": "Excellent performance"
         },
         {
-          "subject": "Filipino",
-          "code": "FIL101",
+          "subject": "Web Development",
+          "code": "CS104",
           "prelim": 80,
           "midterm": 82,
           "preFinal": 84,
@@ -41,8 +41,8 @@
           "feedback": "Consistent effort"
         },
         {
-          "subject": "History",
-          "code": "HIST101",
+          "subject": "Database Systems",
+          "code": "CS105",
           "prelim": 78,
           "midterm": 79,
           "preFinal": 77,
@@ -50,8 +50,8 @@
           "feedback": "Needs more participation"
         },
         {
-          "subject": "Computer Science",
-          "code": "CS101",
+          "subject": "Operating Systems",
+          "code": "CS106",
           "prelim": 90,
           "midterm": 88,
           "preFinal": 91,
@@ -59,8 +59,8 @@
           "feedback": "Strong technical skills"
         },
         {
-          "subject": "Physical Education",
-          "code": "PE101",
+          "subject": "Software Engineering",
+          "code": "CS107",
           "prelim": 95,
           "midterm": 94,
           "preFinal": 96,

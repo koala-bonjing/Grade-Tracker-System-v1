@@ -47,7 +47,9 @@ export default function Dashboard() {
     fetch("/students.json")
       .then((res) => res.json())
       .then((data) => {
-        const johnDoe = data.students.find((s) => s.name === "John Doe");
+        const johnDoe = data.students.find(
+          (s) => s.name === "Selwyn Paul Taloza Smith"
+        );
         setStudent(johnDoe);
       });
   }, []);

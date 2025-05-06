@@ -13,13 +13,20 @@ import "@fontsource/poppins";
 
 function App() {
   const [mode, setMode] = useState(() => {
-    return localStorage.getItem("themeMode") || "light";
+    const savedMode = localStorage.getItem("themeMode");
+    if (savedMode) return savedMode;
+
+    // Default to system's theme preference
+    return window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   });
 
   const toggleMode = () => {
     const newMode = mode === "light" ? "dark" : "light";
     setMode(newMode);
-    localStorage.setItem("themeMode", newMode);
+    localStorage.setItem("themeMode", newMode); // Persist theme in localStorage
   };
 
   const theme = useMemo(
@@ -28,13 +35,13 @@ function App() {
         palette: {
           mode,
           primary: {
-            main: mode === "light" ? "#333465" : "#b6b7ff", // dark navy for light, soft violet for dark
+            main: mode === "light" ? "#333465" : "#b6b7ff", // Dark navy for light, soft violet for dark
             light: mode === "light" ? "#ffffff" : "#2c2c2c",
             dark: mode === "light" ? "#d8d8d8" : "#3a3a3a",
             contrastText: "#ffffff",
           },
           secondary: {
-            main: mode === "light" ? "#e81921" : "#ff7276", // vibrant red for light, softer red for dark
+            main: mode === "light" ? "#e81921" : "#ff7276", // Vibrant red for light, softer red for dark
             light: mode === "light" ? "#f7f7f7" : "#5e1e1e",
             dark: mode === "light" ? "#ededed" : "#a02c2c",
             contrastText: "#ffffff",

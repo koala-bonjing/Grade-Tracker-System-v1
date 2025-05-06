@@ -8,89 +8,184 @@ import {
   List,
   ListItem,
   ListItemText,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Fab,
+  Tooltip,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import * as XLSX from "xlsx";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import SaveIcon from "@mui/icons-material/Save";
 
 export default function TeacherGrading() {
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [block, setBlock] = useState("");
+  const [course, setCourse] = useState("");
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [gradingPeriod, setGradingPeriod] = useState("");
 
   const assessments = ["assignments", "quizzes", "projects", "exams"];
 
-  // Fetching the student data
+  const [newStudent, setNewStudent] = useState({
+    name: "",
+    course: "",
+    block: "",
+    subjects: [],
+  });
+
+  const handleNewStudentChange = (field, value) => {
+    setNewStudent((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleNewSubjectChange = (index, field, value) => {
+    const updatedSubjects = [...newStudent.subjects];
+    updatedSubjects[index][field] = value;
+    setNewStudent({ ...newStudent, subjects: updatedSubjects });
+  };
+
+  const handleSaveNewStudent = () => {
+    setStudents((prev) => [...prev, newStudent]); // Add the new student
+    setAddDialogOpen(false); // Close the dialog after saving
+    setSnackbarMessage("Student added successfully!");
+    setSnackbarSeverity("success");
+    setSnackbarOpen(true);
+  };
+
   useEffect(() => {
     fetch("/student.json")
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Loaded students:", data.students); // Add this for debugging
-        setStudents(data.students);
-      })
+      .then((data) => setStudents(data.students || []))
       .catch((err) => console.error("Failed to load student data", err));
   }, []);
 
-  // Handling changes in grade input fields
-  const handleGradeChange = (subjectIndex, field, value) => {
-    const updated = { ...selectedStudent };
-    updated.subjects[subjectIndex][field] = value;
-    setSelectedStudent(updated);
+  const [addSubjectDialogOpen, setAddSubjectDialogOpen] = useState(false);
+  const [newSubject, setNewSubject] = useState({
+    subject: "",
+    code: "",
+    assignments: 0,
+    quizzes: 0,
+    projects: 0,
+    exams: 0,
+    feedback: "",
+  });
+  const [subjectToDeleteIndex, setSubjectToDeleteIndex] = useState(null);
+  const [deleteSubjectConfirmOpen, setDeleteSubjectConfirmOpen] =
+    useState(false);
+
+  const handleAddSubject = () => {
+    setNewSubject({
+      subject: "",
+      code: "",
+      assignments: 0,
+      quizzes: 0,
+      projects: 0,
+      exams: 0,
+      feedback: "",
+    });
+    setAddSubjectDialogOpen(true);
   };
 
-  // Handling changes in feedback
-  const handleFeedbackChange = (subjectIndex, value) => {
-    const updated = { ...selectedStudent };
-    updated.subjects[subjectIndex].feedback = value;
-    setSelectedStudent(updated);
+  const handleSaveNewSubject = () => {
+    if (selectedStudent && newSubject.subject && newSubject.code) {
+      const updatedStudent = {
+        ...selectedStudent,
+        subjects: [...selectedStudent.subjects, newSubject],
+      };
+      setSelectedStudent(updatedStudent);
+      setStudents((prev) =>
+        prev.map((s) => (s.id === updatedStudent.id ? updatedStudent : s))
+      );
+      setAddSubjectDialogOpen(false);
+      setSnackbarMessage("Subject added successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } else {
+      setSnackbarMessage("Subject name and code are required!");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
 
-  // Submit individual subject grades and feedback
-  const handleSubjectSubmit = (subjectIndex) => {
-    const updatedStudents = students.map((s) =>
-      s.id === selectedStudent.id
-        ? {
-            ...selectedStudent,
-            subjects: selectedStudent.subjects.map((subj, idx) =>
-              idx === subjectIndex ? { ...subj } : subj
-            ),
-          }
-        : s
+  const handleNewSubjectInputChange = (field, value) => {
+    setNewSubject((prev) => ({
+      ...prev,
+      [field]:
+        field === "subject" || field === "code" || field === "feedback"
+          ? value
+          : Number(value),
+    }));
+  };
+
+  const handleSubjectDeleteClick = (index) => {
+    setSubjectToDeleteIndex(index);
+    setDeleteSubjectConfirmOpen(true);
+  };
+
+  const handleDeleteSubject = () => {
+    if (selectedStudent && subjectToDeleteIndex !== null) {
+      const updatedStudent = {
+        ...selectedStudent,
+        subjects: selectedStudent.subjects.filter(
+          (_, i) => i !== subjectToDeleteIndex
+        ),
+      };
+      setSelectedStudent(updatedStudent);
+      setStudents((prev) =>
+        prev.map((s) => (s.id === updatedStudent.id ? updatedStudent : s))
+      );
+      setSnackbarMessage("Subject deleted successfully!");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+    setDeleteSubjectConfirmOpen(false);
+    setSubjectToDeleteIndex(null);
+  };
+
+  const handleStudentDeleteClick = (studentId) => {
+    setStudentToDelete(studentId);
+    setConfirmationOpen(true);
+  };
+
+  const handleDeleteStudent = () => {
+    setStudents((prev) =>
+      prev.filter((student) => student.id !== studentToDelete)
     );
-    setStudents(updatedStudents);
-    alert(
-      `Grades saved for ${selectedStudent.name} - ${selectedStudent.subjects[subjectIndex].subject}`
-    );
+
+    // If the deleted student was selected, clear the selection
+    if (selectedStudent && selectedStudent.id === studentToDelete) {
+      setSelectedStudent(null);
+    }
+
+    setSnackbarMessage("Student deleted successfully!");
+    setSnackbarSeverity("error");
+    setSnackbarOpen(true);
+    setConfirmationOpen(false);
   };
 
-  // File upload handler for importing grades
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      const data = new Uint8Array(event.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const parsed = XLSX.utils.sheet_to_json(worksheet);
-
-      const imported = parsed.map((row, idx) => ({
-        id: idx + 1,
-        name: row.Name,
-        subjects: [
-          {
-            subject: "Mathematics",
-            code: "MATH101",
-            assignments: Number(row.Assignments) || 0,
-            quizzes: Number(row.Quizzes) || 0,
-            projects: Number(row.Projects) || 0,
-            exams: Number(row.Exams) || 0,
-            feedback: row.Feedback || "",
-          },
-        ],
-      }));
-
-      setStudents(imported);
-    };
-
-    reader.readAsArrayBuffer(file);
+  const handleSaveGrades = () => {
+    console.log("Grades saved:", selectedStudent);
+    setSnackbarMessage("Grades saved successfully!");
+    setSnackbarSeverity("success");
+    setSnackbarOpen(true);
   };
 
   return (
@@ -99,36 +194,73 @@ export default function TeacherGrading() {
         Teacher Grading Panel
       </Typography>
 
-      <TextField
-        type="file"
-        fullWidth
-        onChange={handleFileUpload}
-        InputLabelProps={{ shrink: true }}
-        sx={{ mb: 3 }}
-        variant="outlined"
-      />
-
+      {/* Select Course and Block */}
       <Box
         sx={{
           display: "flex",
           gap: 3,
           flexDirection: { xs: "column", md: "row" },
+          mb: 3,
         }}
       >
-        {/* Student List */}
-        <Paper
-          sx={{
-            flex: 1,
-            p: 2,
-            position: "sticky", // Keep the student list fixed
-            top: 20, // Adjust this value based on your design
-            height: "calc(100vh - 60px)", // Set height to fit screen, minus padding
-            overflowY: "auto", // Allow scrolling for the list if needed
-          }}
-        >
-          <Typography variant="h6">Students</Typography>
-          <List>
-            {students.map((student) => (
+        <FormControl fullWidth sx={{ maxWidth: 300 }}>
+          <InputLabel>Course</InputLabel>
+          <Select
+            value={course}
+            onChange={(e) => {
+              setCourse(e.target.value);
+              setBlock("");
+            }}
+          >
+            {students
+              .map((student) => student.course)
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .map((course) => (
+                <MenuItem key={course} value={course}>
+                  {course}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth sx={{ maxWidth: 300 }}>
+          <InputLabel>Block</InputLabel>
+          <Select value={block} onChange={(e) => setBlock(e.target.value)}>
+            {students
+              .filter((student) => student.course === course)
+              .map((student) => student.block)
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .map((block) => (
+                <MenuItem key={block} value={block}>
+                  {block}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ minWidth: 200, mb: 2 }}>
+          <InputLabel>Grading Period</InputLabel>
+          <Select
+            value={gradingPeriod}
+            label="Grading Period"
+            onChange={(e) => setGradingPeriod(e.target.value)}
+          >
+            <MenuItem value="Prelim">Prelim</MenuItem>
+            <MenuItem value="Midterm">Midterm</MenuItem>
+            <MenuItem value="Pre-Finals">Pre-Finals</MenuItem>
+            <MenuItem value="Finals">Finals</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      {/* Student List */}
+      <Paper sx={{ p: 2, mb: 3 }}>
+        <Typography variant="h6">Students</Typography>
+        <List>
+          {students
+            .filter(
+              (student) => student.course === course && student.block === block
+            )
+            .map((student) => (
               <ListItem
                 key={student.id}
                 button
@@ -136,72 +268,308 @@ export default function TeacherGrading() {
                 onClick={() => setSelectedStudent(student)}
               >
                 <ListItemText primary={student.name} />
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent selecting the student when clicking delete
+                    handleStudentDeleteClick(student.id);
+                  }}
+                  sx={{
+                    ":hover": { backgroundColor: "#f44336", color: "#fff" },
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
               </ListItem>
             ))}
-          </List>
-        </Paper>
+        </List>
+      </Paper>
 
-        {/* Student Details */}
-        <Paper sx={{ flex: 2, p: 2 }}>
-          {selectedStudent ? (
-            <>
-              <Typography variant="h6" gutterBottom>
-                Grading {selectedStudent.name}
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmationOpen}
+        onClose={() => setConfirmationOpen(false)}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this student?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmationOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleDeleteStudent}
+            color="error"
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Subject Grade Entry */}
+      {selectedStudent && (
+        <Paper sx={{ p: 2, mb: 10 }}>
+          <Typography variant="h6">{selectedStudent.name}'s Grades</Typography>
+          {selectedStudent.subjects.map((subj, i) => (
+            <Box key={i} sx={{ my: 2 }}>
+              <Typography>
+                {subj.subject} ({subj.code})
               </Typography>
+              {assessments.map((a) => (
+                <TextField
+                  key={a}
+                  label={a}
+                  type="text"
+                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                  value={subj[a]}
+                  sx={{ mr: 2, my: 1 }}
+                  onChange={(e) => {
+                    const value =
+                      e.target.value === "" ? 0 : Number(e.target.value);
+                    if (!isNaN(value)) {
+                      const updated = { ...selectedStudent };
+                      updated.subjects[i][a] = value;
+                      setSelectedStudent(updated);
 
-              {/* Check if `selectedStudent.subjects` exists */}
-              {selectedStudent.subjects &&
-              selectedStudent.subjects.length > 0 ? (
-                selectedStudent.subjects.map((subj, idx) => (
-                  <Box key={idx} sx={{ mb: 4 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      {subj.subject} ({subj.code})
-                    </Typography>
+                      setStudents((prev) =>
+                        prev.map((s) => (s.id === updated.id ? updated : s))
+                      );
+                    }
+                  }}
+                />
+              ))}
+              <TextField
+                label="Feedback"
+                value={subj.feedback}
+                fullWidth
+                onChange={(e) => {
+                  const updated = { ...selectedStudent };
+                  updated.subjects[i].feedback = e.target.value;
+                  setSelectedStudent(updated);
 
-                    {assessments.map((field) => (
-                      <TextField
-                        key={field}
-                        label={`${subj.subject} - ${
-                          field.charAt(0).toUpperCase() + field.slice(1)
-                        }`}
-                        variant="outlined"
-                        fullWidth
-                        sx={{ mb: 2 }}
-                        value={subj[field] || ""}
-                        onChange={(e) =>
-                          handleGradeChange(idx, field, e.target.value)
-                        }
-                      />
-                    ))}
-                    <TextField
-                      label="Feedback"
-                      variant="outlined"
-                      fullWidth
-                      multiline
-                      rows={4}
-                      sx={{ mb: 2 }}
-                      value={subj.feedback || ""}
-                      onChange={(e) =>
-                        handleFeedbackChange(idx, e.target.value)
-                      }
-                    />
-                    <Button
-                      variant="contained"
-                      onClick={() => handleSubjectSubmit(idx)}
-                    >
-                      Save Grades
-                    </Button>
-                  </Box>
-                ))
-              ) : (
-                <Typography>No subjects found for this student.</Typography>
-              )}
-            </>
-          ) : (
-            <Typography>Select a student to view details.</Typography>
-          )}
+                  setStudents((prev) =>
+                    prev.map((s) => (s.id === updated.id ? updated : s))
+                  );
+                }}
+              />
+              <IconButton
+                color="error"
+                onClick={() => handleSubjectDeleteClick(i)}
+                sx={{ mt: 1 }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          ))}
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleAddSubject}
+            sx={{
+              backgroundColor: "#1976d2",
+              "&:hover": {
+                backgroundColor: "#115293",
+                transform: "scale(1.03)",
+              },
+              transition: "all 0.2s ease-in-out",
+            }}
+          >
+            Add Subject
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<SaveIcon />}
+            onClick={handleSaveGrades}
+            sx={{
+              backgroundColor: "#1976d2",
+              "&:hover": {
+                backgroundColor: "#115293",
+                transform: "scale(1.03)",
+              },
+              transition: "all 0.2s ease-in-out",
+            }}
+          >
+            Save Grades
+          </Button>
         </Paper>
-      </Box>
+      )}
+
+      {/* Add New Student Button */}
+      <Tooltip title="Add New Student">
+        <Fab
+          color="primary"
+          onClick={() => setAddDialogOpen(true)} // Open the dialog on click
+          sx={{
+            position: "fixed",
+            bottom: 24,
+            right: 24,
+            "&:hover": {
+              backgroundColor: "#115293",
+              transform: "scale(1.03)",
+            },
+            transition: "all 0.2s ease-in-out",
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      </Tooltip>
+
+      {/* Add Student Dialog */}
+      <Dialog
+        open={addDialogOpen} // This controls the dialog visibility
+        onClose={() => setAddDialogOpen(false)} // Close the dialog on cancel
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>Add Student</DialogTitle>
+        <DialogContent dividers>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Name"
+                value={newStudent.name}
+                fullWidth
+                onChange={(e) => handleNewStudentChange("name", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Course"
+                value={newStudent.course}
+                fullWidth
+                onChange={(e) =>
+                  handleNewStudentChange("course", e.target.value)
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Block"
+                value={newStudent.block}
+                fullWidth
+                onChange={(e) =>
+                  handleNewStudentChange("block", e.target.value)
+                }
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleSaveNewStudent} variant="contained">
+            Save Student
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add Subject Dialog */}
+      <Dialog
+        open={addSubjectDialogOpen}
+        onClose={() => setAddSubjectDialogOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Add Subject</DialogTitle>
+        <DialogContent dividers>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Subject Name"
+                value={newSubject.subject}
+                fullWidth
+                required
+                onChange={(e) =>
+                  handleNewSubjectInputChange("subject", e.target.value)
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Subject Code"
+                value={newSubject.code}
+                fullWidth
+                required
+                onChange={(e) =>
+                  handleNewSubjectInputChange("code", e.target.value)
+                }
+              />
+            </Grid>
+            {assessments.map((a) => (
+              <Grid item xs={12} sm={6} key={a}>
+                <TextField
+                  label={a.charAt(0).toUpperCase() + a.slice(1)}
+                  type="text"
+                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                  value={newSubject[a]}
+                  fullWidth
+                  onChange={(e) =>
+                    handleNewSubjectInputChange(a, e.target.value)
+                  }
+                />
+              </Grid>
+            ))}
+            <Grid item xs={12}>
+              <TextField
+                label="Feedback"
+                value={newSubject.feedback}
+                fullWidth
+                multiline
+                rows={2}
+                onChange={(e) =>
+                  handleNewSubjectInputChange("feedback", e.target.value)
+                }
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddSubjectDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleSaveNewSubject} variant="contained">
+            Add Subject
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Subject Confirmation Dialog */}
+      <Dialog
+        open={deleteSubjectConfirmOpen}
+        onClose={() => setDeleteSubjectConfirmOpen(false)}
+      >
+        <DialogTitle>Confirm Subject Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this subject? This action cannot be
+            undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteSubjectConfirmOpen(false)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteSubject}
+            color="error"
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for success/error messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

@@ -2,17 +2,17 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Button,
-  Box,
   IconButton,
   Menu,
   MenuItem,
-  useTheme,
-  useMediaQuery,
+  Button,
+  Box,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
@@ -24,6 +24,7 @@ export default function Navbar({ toggleMode, mode }) {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
@@ -36,15 +37,11 @@ export default function Navbar({ toggleMode, mode }) {
   const hideOnRoutes = ["/login", "/signup"];
   if (hideOnRoutes.includes(location.pathname)) return null;
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   const handleLogoutClick = () => {
+    handleMenuClose();
     setOpenLogoutDialog(true);
   };
 
@@ -55,53 +52,53 @@ export default function Navbar({ toggleMode, mode }) {
     navigate("/login");
   };
 
-  const handleCloseDialog = () => {
-    setOpenLogoutDialog(false);
-  };
+  const handleCloseDialog = () => setOpenLogoutDialog(false);
 
-  const baseItems = [
+  const navItems = [
     { label: "Dashboard", path: "/" },
     {
       label: userRole === "student" ? "My Grades" : "Student Grades",
       path: "/student-grades",
     },
+    ...(userRole === "teacher"
+      ? [{ label: "Teacher Grading", path: "/teacher-grading" }]
+      : []),
     { label: "Courses", path: "/subject-grades" },
-  ];
-
-  if (userRole === "teacher") {
-    baseItems.splice(2, 0, {
-      label: "Teacher Grading",
-      path: "/teacher-grading",
-    });
-  }
-
-  const navItems = [
-    ...baseItems,
-    { label: "Log Out", action: handleLogoutClick },
   ];
 
   return (
     <>
-      <AppBar position="static" sx={{ mb: 3 }}>
+      <AppBar
+        position="static"
+        color="default"
+        sx={{
+          mb: 3,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: 1,
+        }}
+      >
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              color: "inherit",
+              textDecoration: "none",
+              fontWeight: 600,
+            }}
+          >
             Grade Tracker
           </Typography>
 
           {isMobile ? (
             <>
               <IconButton
-                color="inherit"
                 edge="start"
-                onClick={handleMenuOpen}
+                color="inherit"
                 aria-label="menu"
-                size="large"
-                sx={{
-                  transition: "color 0.3s",
-                  "&:hover": {
-                    color: "#f50057",
-                  },
-                }}
+                onClick={handleMenuOpen}
               >
                 <MenuIcon />
               </IconButton>
@@ -117,33 +114,39 @@ export default function Navbar({ toggleMode, mode }) {
                     key={item.label}
                     component={Link}
                     to={item.path}
-                    onClick={() => {
-                      handleMenuClose();
-                      item.action?.();
-                    }}
+                    onClick={handleMenuClose}
                   >
                     {item.label}
                   </MenuItem>
                 ))}
+                <MenuItem onClick={handleLogoutClick}>Log Out</MenuItem>
                 <MenuItem onClick={toggleMode}>
                   {mode === "dark" ? "Light Mode" : "Dark Mode"}
                 </MenuItem>
               </Menu>
             </>
           ) : (
-            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               {navItems.map((item) => (
                 <Button
                   key={item.label}
-                  color="inherit"
                   component={Link}
                   to={item.path}
-                  onClick={item.action}
+                  color="inherit"
+                  sx={{ fontWeight: 500 }}
                 >
                   {item.label}
                 </Button>
               ))}
-              <IconButton sx={{ ml: 1 }} onClick={toggleMode} color="inherit">
+              <Button onClick={handleLogoutClick} color="inherit">
+                Log Out
+              </Button>
+              <IconButton
+                sx={{ ml: 1 }}
+                onClick={toggleMode}
+                color="inherit"
+                aria-label="toggle theme"
+              >
                 {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
               </IconButton>
             </Box>
@@ -151,15 +154,33 @@ export default function Navbar({ toggleMode, mode }) {
         </Toolbar>
       </AppBar>
 
-      {/* Logout Confirmation Dialog */}
+      {/* Logout Dialog */}
       <Dialog open={openLogoutDialog} onClose={handleCloseDialog}>
         <DialogTitle>Confirm Logout</DialogTitle>
         <DialogContent>Are you sure you want to log out?</DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button
+            onClick={handleCloseDialog}
+            sx={{
+              "&:hover": {
+                backgroundColor: "lightgray",
+                color: "black",
+              },
+            }}
+          >
             Cancel
           </Button>
-          <Button onClick={handleLogout} color="primary" autoFocus>
+
+          <Button
+            onClick={handleLogout}
+            autoFocus
+            sx={{
+              "&:hover": {
+                backgroundColor: "#1976d2",
+                color: "white",
+              },
+            }}
+          >
             Log Out
           </Button>
         </DialogActions>

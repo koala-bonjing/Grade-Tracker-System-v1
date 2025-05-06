@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -15,6 +15,8 @@ import {
   MenuItem,
   ToggleButtonGroup,
   ToggleButton,
+  IconButton,
+  useTheme,
 } from "@mui/material";
 import { Pie, Bar, Line, Doughnut } from "react-chartjs-2";
 import {
@@ -33,7 +35,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import DonutLargeIcon from "@mui/icons-material/DonutLarge";
 
-// Register all the necessary chart.js components
+// Register chart components
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -45,46 +47,42 @@ ChartJS.register(
   LineElement
 );
 
-// Enhanced chart component with multiple chart types
 function GradeChart({ grades, chartType, gwa }) {
-  // Generate vibrant colors with good contrast
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   const generateColors = (count) => {
     const baseColors = [
-      "#FF6384", // Pink
-      "#36A2EB", // Blue
-      "#FFCE56", // Yellow
-      "#4BC0C0", // Teal
-      "#9966FF", // Purple
-      "#FF9F40", // Orange
-      "#8AC926", // Green
-      "#FF66A1", // Pink-red
-      "#1982C4", // Blue-mid
-      "#6A4C93", // Purple-dark
+      "#FF6384",
+      "#36A2EB",
+      "#FFCE56",
+      "#4BC0C0",
+      "#9966FF",
+      "#FF9F40",
+      "#8AC926",
+      "#FF66A1",
+      "#1982C4",
+      "#6A4C93",
     ];
 
-    // If we need more colors than our base set, generate more
     const colors = [...baseColors];
-
     if (count > colors.length) {
       for (let i = colors.length; i < count; i++) {
-        const hue = (i * 137.5) % 360; // Golden angle to get good distribution
+        const hue = (i * 137.5) % 360;
         colors.push(`hsl(${hue}, 70%, 60%)`);
       }
     }
 
     return {
-      backgroundColor: colors.slice(0, count).map((color) => `${color}CC`), // CC = 80% opacity
+      backgroundColor: colors.slice(0, count).map((c) => `${c}CC`),
       borderColor: colors.slice(0, count),
     };
   };
 
   const { backgroundColor, borderColor } = generateColors(grades.length);
+  const labels = grades.map((g) => g.subject);
+  const values = grades.map((g) => parseFloat(g.grade));
 
-  // Common data for all chart types
-  const labels = grades.map((grade) => grade.subject);
-  const values = grades.map((grade) => parseFloat(grade.grade));
-
-  // Pie/Doughnut chart specific options
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -92,28 +90,22 @@ function GradeChart({ grades, chartType, gwa }) {
       legend: {
         position: "right",
         labels: {
+          color: isDark ? "#fff" : "#000",
           boxWidth: 15,
           padding: 15,
-          font: {
-            size: 12,
-          },
+          font: { size: 12 },
         },
       },
       tooltip: {
         callbacks: {
-          label: function (context) {
-            const label = context.label || "";
-            const value = context.formattedValue || "";
-            return `${label}: ${value}`;
-          },
+          label: (ctx) => `${ctx.label}: ${ctx.formattedValue}`,
         },
       },
     },
-    // Add center text plugin for GWA
     elements: {
       center: {
         text: `GWA: ${gwa.toFixed(2)}`,
-        color: "#000",
+        color: theme.palette.text.primary,
         fontStyle: "Arial",
         sidePadding: 20,
         minFontSize: 20,
@@ -122,19 +114,14 @@ function GradeChart({ grades, chartType, gwa }) {
     },
   };
 
-  // Bar/Line chart specific options
   const barLineOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       tooltip: {
         callbacks: {
-          label: function (context) {
-            return `Grade: ${context.formattedValue}`;
-          },
+          label: (ctx) => `Grade: ${ctx.formattedValue}`,
         },
       },
     },
@@ -145,62 +132,39 @@ function GradeChart({ grades, chartType, gwa }) {
         title: {
           display: true,
           text: "Grade",
+          color: theme.palette.text.primary,
         },
+        ticks: { color: isDark ? "#fff" : "#000" },
       },
       x: {
         title: {
           display: true,
           text: "Subject",
+          color: theme.palette.text.primary,
         },
+        ticks: { color: isDark ? "#fff" : "#000" },
       },
     },
   };
 
-  // Configure datasets for different chart types
   const pieData = {
     labels,
-    datasets: [
-      {
-        data: values,
-        backgroundColor,
-        borderColor,
-        borderWidth: 1,
-      },
-    ],
+    datasets: [{ data: values, backgroundColor, borderColor, borderWidth: 1 }],
   };
 
   const doughnutData = {
-    labels,
-    datasets: [
-      {
-        data: values,
-        backgroundColor,
-        borderColor,
-        borderWidth: 1,
-        cutout: "70%",
-      },
-    ],
+    ...pieData,
+    datasets: [{ ...pieData.datasets[0], cutout: "70%" }],
   };
 
-  const barData = {
-    labels,
-    datasets: [
-      {
-        data: values,
-        backgroundColor,
-        borderColor,
-        borderWidth: 1,
-      },
-    ],
-  };
-
+  const barData = pieData;
   const lineData = {
     labels,
     datasets: [
       {
         data: values,
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)",
         borderWidth: 2,
         pointBackgroundColor: backgroundColor,
         pointBorderColor: borderColor,
@@ -210,46 +174,29 @@ function GradeChart({ grades, chartType, gwa }) {
     ],
   };
 
-  // Plugin to add GWA text in the center of doughnut chart
   const textCenterPlugin = {
     id: "textCenter",
-    beforeDraw: function (chart) {
+    beforeDraw: (chart) => {
       if (chart.config.type === "doughnut") {
-        // Get ctx from chart
         const ctx = chart.ctx;
-
-        // Get options from the center object in options
         const centerConfig = chart.options.elements.center;
         if (centerConfig) {
-          const fontStyle = centerConfig.fontStyle || "Arial";
-          const fontSize = centerConfig.minFontSize || 20;
-          const txt = centerConfig.text;
-          const color = centerConfig.color || "#000";
-          const paddingLeft = centerConfig.sidePadding || 20;
-          const paddingRight = centerConfig.sidePadding || 20;
-          const lineHeight = centerConfig.lineHeight || 25;
-
-          // Set font settings
-          ctx.font = `bold ${fontSize}px ${fontStyle}`;
-          ctx.fillStyle = color;
+          ctx.font = `bold ${centerConfig.minFontSize || 20}px ${
+            centerConfig.fontStyle || "Arial"
+          }`;
+          ctx.fillStyle = centerConfig.color || "#000";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-
-          // Get the center position
           const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
           const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
-
-          // Draw text
-          ctx.fillText(txt, centerX, centerY);
+          ctx.fillText(centerConfig.text, centerX, centerY);
         }
       }
     },
   };
 
-  // Register the plugin
   ChartJS.register(textCenterPlugin);
 
-  // Render the appropriate chart based on chartType
   return (
     <Box sx={{ height: 300, position: "relative" }}>
       {chartType === "pie" && <Pie data={pieData} options={pieOptions} />}
@@ -271,65 +218,43 @@ export default function StudentGrades() {
   const [quarter, setQuarter] = useState("PRELIM");
   const [chartType, setChartType] = useState("doughnut");
 
-  // Quarters for the dropdown
   const quarters = ["PRELIM", "MIDTERM", "PRE-FINALS", "FINALS"];
 
   useEffect(() => {
     fetch("/student.json")
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => {
-        const johnDoe = data.students.find(
-          (student) => student.name === "John Doe"
+        const john = data.students.find(
+          (s) => s.name === "Selwyn Paul Taloza Smith"
         );
-
-        if (johnDoe) {
-          setStudent(johnDoe);
-          calculateAverage(johnDoe);
+        if (john) {
+          setStudent(john);
+          calculateAverage(john);
         }
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching student data:", error);
+      .catch((err) => {
+        console.error("Fetch error:", err);
         setLoading(false);
       });
   }, []);
 
   const calculateAverage = (studentData) => {
     const grades = studentData.subjects.map(
-      (subject) =>
-        subject.assignments + subject.quizzes + subject.projects + subject.exams
+      (s) => s.assignments + s.quizzes + s.projects + s.exams
     );
-    const totalGrades = grades.reduce((sum, grade) => sum + grade, 0);
-    const averageGrade = totalGrades / (grades.length * 4);
-
-    setAverage(averageGrade);
+    const total = grades.reduce((a, b) => a + b, 0);
+    setAverage(total / (grades.length * 4));
   };
 
-  const handleQuarterChange = (event) => {
-    setQuarter(event.target.value);
-  };
-
-  const handleChartTypeChange = (event, newChartType) => {
-    if (newChartType !== null) {
-      setChartType(newChartType);
-    }
-  };
-
-  if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
-
-  const studentGrades = student.subjects.map((subject) => ({
-    subject: subject.subject,
-    grade: (
-      (subject.assignments +
-        subject.quizzes +
-        subject.projects +
-        subject.exams) /
-      4
-    ).toFixed(2),
-    feedback: subject.feedback,
-  }));
+  const studentGrades =
+    student?.subjects.map((s) => ({
+      subject: s.subject,
+      grade: ((s.assignments + s.quizzes + s.projects + s.exams) / 4).toFixed(
+        2
+      ),
+      feedback: s.feedback,
+    })) || [];
 
   return (
     <Box sx={{ p: 3 }}>
@@ -343,26 +268,15 @@ export default function StudentGrades() {
           mb: 3,
         }}
       >
-        <Typography variant="h4" component="h1">
-          {quarter} GRADES
-        </Typography>
+        <Typography variant="h4">{quarter} GRADES</Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            gap: 2,
-            width: { xs: "100%", sm: "auto" },
-          }}
-        >
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
           <FormControl sx={{ minWidth: 150 }}>
-            <InputLabel id="quarter-select-label">Quarter</InputLabel>
+            <InputLabel>Quarter</InputLabel>
             <Select
-              labelId="quarter-select-label"
-              id="quarter-select"
               value={quarter}
               label="Quarter"
-              onChange={handleQuarterChange}
+              onChange={(e) => setQuarter(e.target.value)}
               size="small"
             >
               {quarters.map((q) => (
@@ -376,103 +290,76 @@ export default function StudentGrades() {
           <ToggleButtonGroup
             value={chartType}
             exclusive
-            onChange={handleChartTypeChange}
-            aria-label="chart type"
+            onChange={(e, val) => val && setChartType(val)}
             size="small"
           >
-            <ToggleButton value="pie" aria-label="pie chart">
+            <ToggleButton value="pie">
               <PieChartIcon />
             </ToggleButton>
-            <ToggleButton value="doughnut" aria-label="doughnut chart">
+            <ToggleButton value="doughnut">
               <DonutLargeIcon />
             </ToggleButton>
-            <ToggleButton value="bar" aria-label="bar chart">
+            <ToggleButton value="bar">
               <BarChartIcon />
             </ToggleButton>
-            <ToggleButton value="line" aria-label="line chart">
+            <ToggleButton value="line">
               <ShowChartIcon />
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
       </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          gap: 3,
-        }}
-      >
-        <Paper sx={{ p: 3, flex: 1, display: "flex", flexDirection: "column" }}>
-          <Typography variant="h5" gutterBottom>
-            Grades Distribution
-          </Typography>
-          <GradeChart
-            grades={studentGrades}
-            chartType={chartType}
-            gwa={average}
-          />
-        </Paper>
-
-        <Paper sx={{ p: 3, flex: 2 }}>
-          <Typography variant="h6" gutterBottom>
-            Grade Details for {student.name}
-          </Typography>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell align="right">Grade</TableCell>
-                  <TableCell>Feedback</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {studentGrades.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{row.subject}</TableCell>
-                    <TableCell align="right">{row.grade}</TableCell>
-                    <TableCell>{row.feedback}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <Box
-            sx={{
-              mt: 3,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Typography variant="h6">GWA</Typography>
-            <Typography
-              sx={{
-                fontSize: "1.5rem",
-                fontWeight: "bold",
-                p: 1,
-                bgcolor:
-                  average >= 85
-                    ? "#d4edda"
-                    : average >= 75
-                    ? "#fff3cd"
-                    : "#f8d7da",
-                color:
-                  average >= 85
-                    ? "#155724"
-                    : average >= 75
-                    ? "#856404"
-                    : "#721c24",
-                borderRadius: 1,
-              }}
-            >
-              {average.toFixed(2)}
+      {loading ? (
+        <Typography>Loading...</Typography>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 3,
+          }}
+        >
+          <Paper sx={{ p: 3, flex: 1 }}>
+            <Typography variant="h6" gutterBottom>
+              Grade Chart
             </Typography>
-          </Box>
-        </Paper>
-      </Box>
+            <GradeChart
+              grades={studentGrades}
+              chartType={chartType}
+              gwa={average}
+            />
+          </Paper>
+
+          <Paper sx={{ p: 3, flex: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              {student
+                ? `Grade Details for ${student.name}`
+                : "No student data available."}
+            </Typography>
+
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Subject</TableCell>
+                    <TableCell align="right">Grade</TableCell>
+                    <TableCell>Feedback</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {studentGrades.map((row, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{row.subject}</TableCell>
+                      <TableCell align="right">{row.grade}</TableCell>
+                      <TableCell>{row.feedback}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Box>
+      )}
     </Box>
   );
 }
